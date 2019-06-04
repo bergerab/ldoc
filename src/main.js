@@ -300,6 +300,7 @@ ldoc.pageName = () => {
     }
 };
 ldoc.pages = [];
+ldoc.subpages = [];
 ldoc.page = (...args) => {
     const page = new Page(...args);
     ldoc.pages.push(page);
@@ -316,8 +317,19 @@ ldoc.subpage = (parentUrl, ...args) => {
         }
     }
     if (!found) {
+        for (const parent of ldoc.subpages) {
+            if (parent.url === parentUrl) {
+                parent.add(page);
+                found = true;
+                break;
+            }
+        }
+    }
+    
+    if (!found) {
         throw new Error(`No parent page with url ${parentUrl}`);
     }
+    ldoc.subpages.push(page);
     return page;
 };
 ldoc.sitemap = () => () => l.with({ renderSiteMap }, () => renderSiteMap(ldoc.pages[0], 0, ol({ style: { textAlign: 'left' }})));
