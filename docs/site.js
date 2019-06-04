@@ -17,7 +17,7 @@ ldoc.page('Introduction', 'intro', l(() => div(
         { align: 'center' },
         img({ src: '../img/logo.png', width: '200px' }),
         div(
-            a({ href: 'https://travis-ci.org/adambertrandberger/l'}, img({ alt: 'no dependencies', src: 'https://travis-ci.org/adambertrandberger/l.svg?branch=master' })),
+            a({ href: 'https://travis-ci.org/adambertrandberger/ldoc'}, img({ alt: 'build status', src: 'https://travis-ci.org/adambertrandberger/ldoc.svg?branch=master' })),
         ),
     ),
     p(`
@@ -248,6 +248,24 @@ ldoc.footer(content)
     `)), `
 Other than there being no default footer, the same rules for the header also apply to the footer.
 `,
+)));
+
+ldoc.subpage('usage', 'Rendering the Site Map', 'rendering-the-site-map', l(() => div(
+    'awoefij'
+)));
+
+ldoc.subpage('usage', 'Setting the Document Name', 'setting-the-document-name', l(() => div(
+    'oaiwjef'
+)));
+
+ldoc.page('Additional Resources', 'additional-resources', l(() => div(
+    `Need more examples? Take a look at the source code for this documentation. You can find the source at`,
+    a({ href: 'https://github.com/adambertrandberger/ldoc' }, 'https://github.com/adambertrandberger/ldoc'),
+    br,br,
+    span(`
+To learn more about generating the HTML needed for ldoc via Javascript, take a look at 
+    `), a({ href: 'https://github.com/adambertrandberger/l' }, 'https://github.com/adambertrandberger/l'),
+    p(`The documentation for l also includes related libraries that can be used for the same purpose.`),
 )));
 
 ldoc.page('License', 'license', l(() => div(pre({ style: 'text-align: center;' }, code(`

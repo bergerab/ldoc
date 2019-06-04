@@ -70,13 +70,13 @@ class Site {
                 parent,
                 l.with(ctx,
                        function () {
-                           const html =  div({ class: 'ldoc-nav-bar' },
-                                             table({ width: '100%' }, tr(
-                                                 td({ style: 'text-align: left; width: 33%;' }, a(!prev ? '' : prev.name, { class: 'ldoc-nav ldoc-left-nav', href: '#'+ (!prev ? '' : prev.url) })),
-                                                 td({ style: 'text-align: center; width: 33%;' }, a(!up ? '' : up.name, { class: 'ldoc-nav ldoc-right-nav', href: '#'+ (!up ? '' : up.url) })),
-                                                 td({ style: 'text-align: right; width: 33%' }, a(!next ? '' : next.name, { href: '#'+ (!next ? '' : next.url), class: 'ldoc-nav ldoc-up-nav' }))
-                                             ))
-                                            );
+                           const html =  div(
+                               table({ class: 'ldoc-nav-bar', width: '100%' }, tr(
+                                   td({ style: 'text-align: left; width: 33%;' }, a(!prev ? '' : prev.name, { class: 'ldoc-nav ldoc-left-nav', href: '#'+ (!prev ? '' : prev.url) })),
+                                   td({ style: 'text-align: center; width: 33%;' }, a(!up ? '' : up.name, { class: 'ldoc-nav ldoc-right-nav', href: '#'+ (!up ? '' : up.url) })),
+                                   td({ style: 'text-align: right; width: 33%' }, a(!next ? '' : next.name, { href: '#'+ (!next ? '' : next.url), class: 'ldoc-nav ldoc-up-nav' }))
+                               ))
+                           );
 
                            if (!currentPage.hideHeader) {
                                if (pageHeader !== null) {
@@ -193,10 +193,10 @@ class Page {
 
 function renderSiteMap(cursor, depth=0, parent=document.body) {
     while (cursor) {
-        let nextParent = l.li(l.a(cursor.name, { href: '#'+cursor.url }));
+        let nextParent = l.li({ class: 'ldoc-sitemap-item' }, l.a(cursor.name, { href: '#'+cursor.url, class: 'ldoc-sitemap-link' }));
         l(parent, nextParent);
         if (cursor.children.length > 0) {
-            const list = l.ol();
+            const list = l.ol({ class: 'ldoc-sitemap-item' });
             renderSiteMap(cursor.children[0], depth + 1, list);
             l(nextParent, list);
         }
@@ -291,7 +291,7 @@ ldoc.footer = html => {
     pageFooter = html;
 };
 ldoc.currentPage = () => ldoc.site.currentPage;
-ldoc.pageName = () => () => {
+ldoc.pageName = () => {
     if (!ldoc.site) {
         throw new Error('You must use ldoc.pageName from within a function only. For example: `ldoc.header(() => ldoc.pageName())`');
     }
@@ -336,6 +336,6 @@ ldoc.subpage = (parentUrl, ...args) => {
     ldoc.subpages.push(page);
     return page;
 };
-ldoc.sitemap = () => () => l.with({ renderSiteMap }, () => renderSiteMap(ldoc.pages[0], 0, ol({ style: { textAlign: 'left' }})));
+ldoc.sitemap = () => () => l.with({ renderSiteMap }, () => renderSiteMap(ldoc.pages[0], 0, ol({ class: 'ldoc-sitemap', style: { textAlign: 'left' }})));
 
 module.exports = ldoc;
