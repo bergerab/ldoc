@@ -291,7 +291,11 @@ ldoc.footer = html => {
     pageFooter = html;
 };
 ldoc.currentPage = () => ldoc.site.currentPage;
-ldoc.pageName = () => {
+ldoc.pageName = () => () => {
+    if (!ldoc.site) {
+        throw new Error('You must use ldoc.pageName from within a function only. For example: `ldoc.header(() => ldoc.pageName())`');
+    }
+    
     const page = ldoc.currentPage();
     if (page) {
         return page.name;

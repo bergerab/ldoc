@@ -1,9 +1,25 @@
 ldoc.name('ldoc');
+ldoc.header(() => l(() => table(
+    { width: '100%' },
+    tr(
+        td({style: 'width: 33%;' },
+           img({ src: '../img/logo.png', width: '100px' }),
+          ),
+        td({style: 'width: 33%; text-align: center;' },
+           h2(ldoc.pageName()),
+          ),
+        td({style: 'width: 33%;' }),
+    )
+)));
 
 ldoc.page('Introduction', 'intro', l(() => div(
-    div({ align: 'center' },
-        h1('ldoc'),
-       ),
+    div(
+        { align: 'center' },
+        img({ src: '../img/logo.png', width: '200px' }),
+        div(
+            a({ href: 'https://travis-ci.org/adambertrandberger/l'}, img({ alt: 'no dependencies', src: 'https://travis-ci.org/adambertrandberger/l.svg?branch=master' })),
+        ),
+    ),
     p(`
 ldoc is a Javascript library for creating navigation enabled HTML documents. It supports browser navigation with the forward and backward buttons, keyboard shortcuts, nested
 pages, and can be styled however you like. This very page is created using ldoc.
@@ -124,7 +140,7 @@ This object has the following functions available:
 
 ldoc.subpage('usage', 'Creating Pages', 'creating-pages', l(() => div(
     p(`
-All documents can be created via side effecting calls to "ldoc.page" and "ldoc.subpage". Let's go over "ldoc.page" first.
+All documents can be created via side-effecting calls to "ldoc.page" and "ldoc.subpage". Let's go over "ldoc.page" first.
     `),
     pre(code(`
 ldoc.page(name, url, content [, config={}])        
@@ -138,7 +154,8 @@ ldoc.page('My Second Page', 'second-page', '<div>Wow</div>')
 ldoc.render();
     `)),
     p(`
-You can see that the order that "ldoc.page" is call is important. You must call the function in the order you want it to appear in the document.
+You can see that the order that "ldoc.page" is called is important. You must call the function in the order you want it to appear in the document. Also, note how the
+last function call that is made is to "ldoc.render()". This is a requirement for all ldoc documents, as it specifies when you are finished specifying your pages.
     `),
 
     span(`
@@ -202,9 +219,51 @@ ldoc.subpage('parent', 'Child', 'child', l(() => div('I\\'m the first.')));
 ldoc.subpage('child', 'Child Child', 'child-child', l(() => div('I\\'m the second.')));
 ldoc.render();
     `)),
-    p(`
-
-    `),
+    span(`
+The same config object can be passed to "ldoc.subpage" as "ldoc.page" too. For example, you can hide the header on a subpage by passing`), code(` {hideHeader: true}`), '.',
+    
 )));
+
+ldoc.subpage('usage', 'Headers and Footers', 'headers-and-footers', l(() => div(
+    p(`
+Each page has a default header. This header is just a centered h2 tag with the current page's name in it. If you want to create your own header you can override the default by calling:
+    `),
+    pre(code(`
+ldoc.header(content)
+    `)),
+    `
+Where "content" is either a string or DOM node, or a function that produces one of those. If you do give it a function, you gain access to another function: `, code('ldoc.pageName()'), '.',
+    `
+You can use this function to refer to the name of the current page that is being viewed. Here is an example of using it:
+    `,
+    pre(code(`
+ldoc.header(() => \`<h2>$\{ldoc.pageName()\}</h2>\`);
+    `)), `
+This example will replace the center aligned default header, with a left aligned one. Note that if you didn't use a function when calling "ldoc.pageName" you will receive an error.
+`,
+    p(`
+Unlike the header, there is no default footer. You can set a footer by calling:
+    `), pre(code(`
+ldoc.footer(content)
+    `)), `
+Other than there being no default footer, the same rules for the header also apply to the footer.
+`,
+)));
+
+ldoc.page('License', 'license', l(() => div(pre({ style: 'text-align: center;' }, code(`
+Copyright 2019 Adam Bertrand Berger
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+`)))));
 
 ldoc.render();
