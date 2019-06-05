@@ -1,7 +1,7 @@
 {
-    "name": "ldoc",
+    "name": "ldoc-html",
     "version": "1.0.4",
-    "description": "For creating navigation enabled HTML documents",
+    "description": "Create navigation enabled HTML documents",
     "main": "dist/ldoc.js",
     "scripts": {
         "build": "webpack --mode=production",

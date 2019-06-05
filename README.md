@@ -5,4 +5,6 @@
 <h2>Navigation Enabled HTML Documents</h2>
 </div>
 
-See an example, and read the documentation for ldoc [here](https://adambertrandberger.github.io/ldoc/docs/).
+ldoc is a Javascript library for creating navigation enabled HTML documents. It supports browser navigation with the forward and backward buttons, keyboard shortcuts, nested pages, and can be styled however you like.
+
+[Check out the documentation and a live example here](https://adambertrandberger.github.io/ldoc/docs/).
