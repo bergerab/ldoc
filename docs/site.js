@@ -81,7 +81,7 @@ This object has the following functions available:
           
           tr(
               td(
-                  'ldoc.page(name, url, content [, config={}])'
+                  'ldoc.page(name, url [, content, config={}])'
               ),
               td(
                   'Adds a new page to the document with name of "name", which is accessible via the hash "url", with the content "content"'
@@ -153,7 +153,7 @@ ldoc.subpage('usage', 'Creating Pages', 'creating-pages', l(() => div(
 All documents can be created via side-effecting calls to "ldoc.page" and "ldoc.subpage". Let's go over "ldoc.page" first.
     `),
     pre(code(`
-ldoc.page(name, url, content [, config={}])        
+ldoc.page(name, url [, content, config={}])        
     `)),
     p(`
 Here is a basic example:
@@ -191,7 +191,7 @@ ldoc.render();
 The difference might not look significant in such a small example, but as your project grows it will make it easier to work with.
     `),
     p(`
-Alternatively, you could use AJAX calls to load HTML template files. I'm considering adding this as a built-in feature to ldoc.
+Alternatively, you could use AJAX calls to load HTML template files. We will see that on the next page.
     `),
     p(`
 All pages are rendered with a header by default. Sometimes it is necessary to hide the header for certain pages. For this you can specify the "hideHeader" flag in the optional config argument:
@@ -201,6 +201,8 @@ ldoc.page('My First Page', 'first-page', l(() => div('Without header')), { hideH
 ldoc.render();
     `))
 )));
+
+ldoc.subpage('usage', 'Using AJAX to Load Pages', 'ajax');
 
 ldoc.subpage('usage', 'Creating Sub-Pages', 'creating-sub-pages', l(() => div(
     p(`

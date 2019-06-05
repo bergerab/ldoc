@@ -63,36 +63,45 @@ class Site {
 
     render(parent=document.body) {
         if (this.currentPage) {
-            window.location.hash = this.currentPage.url;
-            document.title = docName !== null ? `${docName} - ${this.currentPage.name}` : this.currentPage.name;
-            const prev = this.getPrev(),
-                  next = this.getNext(),
-                  up = this.getUp();
-
-            const html =  l.div(
-                l.table({ class: 'ldoc-nav-bar', width: '100%' }, l.tr(
-                    l.td({ style: 'text-align: left; width: 33%;' }, l.a(!prev ? '' : prev.name, { class: 'ldoc-nav ldoc-left-nav', href: '#'+ (!prev ? '' : prev.url) })),
-                    l.td({ style: 'text-align: center; width: 33%;' }, l.a(!up ? '' : up.name, { class: 'ldoc-nav ldoc-right-nav', href: '#'+ (!up ? '' : up.url) })),
-                    l.td({ style: 'text-align: right; width: 33%' }, l.a(!next ? '' : next.name, { href: '#'+ (!next ? '' : next.url), class: 'ldoc-nav ldoc-up-nav' }))
-                ))
-            );
-
-            if (!this.currentPage.hideHeader) {
-                if (pageHeader !== null) {
-                    this.addContent(html, pageHeader);
-                } else {
-                    l(html, this.defaultHeader());
-                }
+            if (this.currentPage.ajax) {
+                this.currentPage.getPageAjax(c => this.setContent(parent, c));
+            } else {
+                this.setContent(parent);
             }
-
-            this.addContent(html, this.currentPage.html);
-
-            if (pageFooter !== null) {
-                this.addContent(html, pageFooter);
-            }
-
-            l.set(parent, html);
         }
+    }
+
+    setContent(parent, pageHtml=this.currentPage.html) {
+        window.location.hash = this.currentPage.url;
+        document.title = docName !== null ? `${docName} - ${this.currentPage.name}` : this.currentPage.name;
+        const prev = this.getPrev(),
+              next = this.getNext(),
+              up = this.getUp();
+
+        const html =  l.div(
+            l.table({ class: 'ldoc-nav-bar', width: '100%' }, l.tr(
+                l.td({ style: 'text-align: left; width: 33%;' }, l.a(!prev ? '' : prev.name, { class: 'ldoc-nav ldoc-left-nav', href: '#'+ (!prev ? '' : prev.url) })),
+                l.td({ style: 'text-align: center; width: 33%;' }, l.a(!up ? '' : up.name, { class: 'ldoc-nav ldoc-right-nav', href: '#'+ (!up ? '' : up.url) })),
+                l.td({ style: 'text-align: right; width: 33%' }, l.a(!next ? '' : next.name, { href: '#'+ (!next ? '' : next.url), class: 'ldoc-nav ldoc-up-nav' }))
+            ))
+        );
+
+        if (!this.currentPage.hideHeader) {
+            if (pageHeader !== null) {
+                this.addContent(html, pageHeader);
+            } else {
+                l(html, this.defaultHeader());
+            }
+        }
+
+        this.addContent(html, pageHtml);
+
+        if (pageFooter !== null) {
+            this.addContent(html, pageFooter);
+        }
+
+        l.set(parent, html);
+
     }
 
     addContent(node, page) {
@@ -151,8 +160,23 @@ class Page {
         this.children = [];
         this.init = init;
         this.hideHeader = init.hideHeader;
-        
+
+        this.ajax = !html;
+
         return this;
+    }
+
+    getPageAjax(callback) {
+        var xhttp = new XMLHttpRequest();
+        const page = this;
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                const response = this.responseText;
+                callback(response);
+            }
+        };
+        xhttp.open('GET', `${this.url}.html`, true);
+        xhttp.send();
     }
 
     initializeChildren() {
