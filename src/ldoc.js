@@ -9,6 +9,7 @@
  */
 
 const l = require('l-html');
+const marked = require('marked');
 
 class Site {
     constructor(pages, init) {
@@ -49,8 +50,6 @@ class Site {
         hash = hash.substring(1);
         if (this.pages[hash]) {
             this.currentPage = this.pages[hash];
-            this.render();
-
         }
     }
 
@@ -63,17 +62,38 @@ class Site {
 
     render(parent=document.body) {
         if (this.currentPage) {
-            if (this.currentPage.ajax) {
-                this.currentPage.getPageAjax(c => this.setContent(parent, c));
+            if (document.location.hash !== '#'+this.currentPage.url) {
+                document.location.hash = '#'+this.currentPage.url;
+                return;
+            }
+            
+            if (this.currentPage.html instanceof File) {
+                parent.style.visibility = 'hidden';
+                this.currentPage.getPageAjax(c => {
+                    if ((
+                        this.currentPage.html.path &&
+                            this.currentPage.html.path.endsWith('.html') &&
+                            this.currentPage.contentType === 'auto'
+                    ) ||
+                        this.currentPage.contentType === 'html'
+                       ) {
+                        this.setContent(parent, c);
+                    } else {
+                        this.setContent(parent, marked(c));
+                    }
+                    ldoc.onpageload(this.currentPage);
+                    setTimeout(() => parent.style.visibility = null, 0);
+                });
             } else {
                 this.setContent(parent);
+                ldoc.onpageload(this.currentPage);
             }
         }
     }
 
     setContent(parent, pageHtml=this.currentPage.html) {
-        window.location.hash = this.currentPage.url;
         document.title = docName !== null ? `${docName} - ${this.currentPage.name}` : this.currentPage.name;
+        
         const prev = this.getPrev(),
               next = this.getNext(),
               up = this.getUp();
@@ -94,14 +114,15 @@ class Site {
             }
         }
 
+        this.addContent(html, this.currentPage.header);
         this.addContent(html, pageHtml);
+        this.addContent(html, this.currentPage.footer);
 
         if (pageFooter !== null) {
             this.addContent(html, pageFooter);
         }
 
         l.set(parent, html);
-
     }
 
     addContent(node, page) {
@@ -143,6 +164,12 @@ class Site {
     }
 }
 
+class File {
+    constructor(path) {
+        this.path = path;
+    }
+}
+
 class Page {
     constructor(name, url, html, init={}) {
         this.name = name;
@@ -160,8 +187,20 @@ class Page {
         this.children = [];
         this.init = init;
         this.hideHeader = init.hideHeader;
+        this.contentType = init.contentType || 'auto';
 
-        this.ajax = !html;
+        this.footer = init.footer || '';
+        this.header = init.header || '';
+
+        if (!html) {
+            throw new Error('Pages require content. You can pass ldoc.page a DOM node, an HTML string, or a file as a 3rd argument to specify the content of the page.');
+        }
+
+        if (typeof this.html === 'string') {
+            if (this.contentType === 'auto' || this.contentType === 'md') {
+                this.html = marked(this.html);
+            }
+        }
 
         return this;
     }
@@ -175,7 +214,11 @@ class Page {
                 callback(response);
             }
         };
-        xhttp.open('GET', `${this.url}.html`, true);
+        let path = this.html.path;
+        if (!path) {
+            path = `${this.url}.md`;
+        }
+        xhttp.open('GET', path, true);
         xhttp.send();
     }
 
@@ -263,6 +306,7 @@ ldoc.render = (...pages) => {
         switch (e.key) {
         case 'ArrowLeft':
         case 'a':
+        case 'A':
             const prevPage = site.getPrev();
             if (prevPage) {
                 site.currentPage = prevPage;
@@ -271,6 +315,7 @@ ldoc.render = (...pages) => {
             break;
         case 'ArrowRight':
         case 'd':
+        case 'D':
             const nextPage = site.getNext();
             if (nextPage) {
                 site.currentPage = nextPage;
@@ -279,6 +324,7 @@ ldoc.render = (...pages) => {
             break;
         case 'ArrowDown':
         case 's':
+        case 'S':
             const downPage = site.getDown();
             if (downPage) {
                 site.currentPage = downPage;
@@ -287,6 +333,7 @@ ldoc.render = (...pages) => {
             break;
         case 'ArrowUp':
         case 'w':
+        case 'W':
             const upPage = site.getUp();
             if (upPage) {
                 site.currentPage = upPage;
@@ -297,27 +344,43 @@ ldoc.render = (...pages) => {
     });
 
     hashChange();
-    site.render();
 };
+function getVal(val) {
+    if (typeof val === 'function') {
+        return getVal(val());
+    }
+    if (typeof val === 'object') {
+        return val.outerHTML;
+    }
+    return val;
+}
 let docName = null;
 ldoc.name = n => {
     docName = n;
 };
 let pageHeader = null,
     pageFooter = null;
-ldoc.header = html => {
-    pageHeader = html;
+ldoc.header = (html, init={}) => {
+    if (init.contentType === 'html') {
+        pageHeader = html;
+    } else {
+        pageHeader = () => marked(getVal(html));
+    }
 };
-ldoc.footer = html => {
-    pageFooter = html;
+ldoc.footer = (html, init={}) => {
+    if (init.contentType === 'html') {
+        pageFooter = html;
+    } else {
+        pageFooter = () => marked(getVal(html));
+    }
 };
-ldoc.currentPage = () => window.ldoc.site.currentPage;
+ldoc.currentPage = () => ldoc.site.currentPage;
 ldoc.pageName = () => {
-    if (!window.ldoc.site) {
+    if (!ldoc.site) {
         throw new Error('You must use ldoc.pageName from within a function only. For example: `ldoc.header(() => ldoc.pageName())`');
     }
     
-    const page = window.ldoc.currentPage();
+    const page = ldoc.currentPage();
     if (page) {
         return page.name;
     } else {
@@ -357,8 +420,10 @@ ldoc.subpage = (parentUrl, ...args) => {
     ldoc.subpages.push(page);
     return page;
 };
-ldoc.sitemap = () => () => {
-    return window.ldoc.renderSiteMap(window.ldoc.pages[0], 0, window.l.ol({ class: 'ldoc-sitemap', style: { textAlign: 'left' }}));
+ldoc.sitemap = () => {
+    return ldoc.renderSiteMap(ldoc.pages[0], 0, l.ol({ class: 'ldoc-sitemap', style: { textAlign: 'left' }})).outerHTML;
 };
+ldoc.file = path => new File(path);
+ldoc.onpageload = () => {};
 
 module.exports = ldoc;

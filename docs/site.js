@@ -32,7 +32,7 @@ page to see how a site map can be automatically generated for your site too.
 `)
 )), { hideHeader: true });
 
-ldoc.page('Overview', 'overview', ldoc.sitemap());
+ldoc.page('Overview', 'overview', () => ldoc.sitemap());
 
 ldoc.page('Installation', 'installation', l(() => div(
     h3('For Web Browsers'),
@@ -124,6 +124,16 @@ This object has the following functions available:
               )
           ),
 
+          
+          tr(
+              td(
+                  'ldoc.file([path])'
+              ),
+              td(
+                  'Tells ldoc.page that you want the content of a page to be another file (specified by its filepath). If you don\'t pass a filepath, it will guess the file path based on the page\'s url.'
+              )
+          ),
+          
           tr(
               td(
                   'ldoc.name(name)'
@@ -169,7 +179,8 @@ last function call that is made is to "ldoc.render()". This is a requirement for
     `),
 
     span(`
-The content of pages can be specified as an HTML string, such as "<div>hi</div>" or a DOM node. DOM nodes can be created with "document.createElement", or you
+The content of pages can be specified as an HTML or markdown string, such as "<div>hi</div>" or "# woiejfowe". By default a given string will be assumed to be markdown, but you can force the string to be considered as HTML only by passing a config object that contains "contentType" equal to "html".
+ The content can also be specified as a DOM node. DOM nodes can be created with "document.createElement", or you
 can use a DOM node generation library. I suggest using `),
     a({ href: 'https://github.com/adambertrandberger/l' }, code(' l ')),
     a({ href: 'https://github.com/adambertrandberger/l' }, '( https://github.com/adambertrandberger/l ) '),
@@ -202,7 +213,7 @@ ldoc.render();
     `))
 )));
 
-ldoc.subpage('usage', 'Using AJAX to Load Pages', 'ajax');
+ldoc.subpage('usage', 'Using HTML Files for Page Content', 'ajax', ldoc.file('ajax.md'));
 
 ldoc.subpage('usage', 'Creating Sub-Pages', 'creating-sub-pages', l(() => div(
     p(`
