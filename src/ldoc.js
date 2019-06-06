@@ -123,6 +123,10 @@ class Site {
         }
 
         l.set(parent, html);
+
+        for (const script of parent.getElementsByTagName('script')) {
+            eval(script.textContent);
+        }
     }
 
     addContent(node, page) {
