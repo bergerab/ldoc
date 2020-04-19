@@ -29,7 +29,7 @@ As you browse the documentation, try using the "w", "a", "s", "d" or arrow keys 
 But wait, there's more! Try out the
 `), a({ href: '#overview' }, 'overview'), span(`
 page to see how a site map can be automatically generated for your site too.
-`), div(a({ href: 'https://github.com/bergerab/ldoc' }, 'Download and view the source code here.)),
+`), div(a({ href: 'https://github.com/bergerab/ldoc' }, 'Download and view the source code here.')),
 )), { hideHeader: true });
 
 ldoc.page('Overview', 'overview', () => ldoc.sitemap());
