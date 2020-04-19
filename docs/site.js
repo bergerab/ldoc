@@ -17,7 +17,7 @@ ldoc.page('Introduction', 'intro', l(() => div(
         { align: 'center' },
         img({ src: '../img/logo.png', width: '200px' }),
         div(
-            a({ href: 'https://travis-ci.org/adambertrandberger/ldoc'}, img({ alt: 'build status', src: 'https://travis-ci.org/adambertrandberger/ldoc.svg?branch=master' })),
+            a({ href: 'https://travis-ci.org/adambertrandberger/ldoc'}, img({ alt: 'build status', src: 'https://travis-ci.org/bergerab/ldoc.svg?branch=master' })),
         ),
     ),
     p(`
@@ -29,7 +29,7 @@ As you browse the documentation, try using the "w", "a", "s", "d" or arrow keys 
 But wait, there's more! Try out the
 `), a({ href: '#overview' }, 'overview'), span(`
 page to see how a site map can be automatically generated for your site too.
-`)
+`), div(a({ href: 'https://github.com/bergerab/ldoc' }, 'Download and view the source code here.)),
 )), { hideHeader: true });
 
 ldoc.page('Overview', 'overview', () => ldoc.sitemap());
@@ -44,7 +44,7 @@ To install ldoc for web browsers, just download the ldoc.js Javascript file and 
     `)),
     span(`
 You can download ldoc.js by right clicking and clicking "Save Link" in your browser 
-`), a({ href: 'https://adambertrandberger.github.io/ldoc/dist/ldoc.js' }, 'here.'),
+`), a({ href: 'https://bergerab.github.io/ldoc/dist/ldoc.js' }, 'here.'),
     h3('For NodeJS Environments'),
     p(`
 To install ldoc for nodejs environments, run:`), code(' npm install ldoc-html '), p(`then require it in your code like this:`),
@@ -182,8 +182,8 @@ last function call that is made is to "ldoc.render()". This is a requirement for
 The content of pages can be specified as an HTML or markdown string, such as "<div>hi</div>" or "# woiejfowe". By default a given string will be assumed to be markdown, but you can force the string to be considered as HTML only by passing a config object that contains "contentType" equal to "html".
  The content can also be specified as a DOM node. DOM nodes can be created with "document.createElement", or you
 can use a DOM node generation library. I suggest using `),
-    a({ href: 'https://github.com/adambertrandberger/l' }, code(' l ')),
-    a({ href: 'https://github.com/adambertrandberger/l' }, '( https://github.com/adambertrandberger/l ) '),
+    a({ href: 'https://github.com/bergerab/l' }, code(' l ')),
+    a({ href: 'https://github.com/bergerab/l' }, '( https://github.com/adambertrandberger/l ) '),
     span(`as I am the author of that library; however, there are plenty of other DOM node generating libraries to
 look at.
     `), code(' l '), span(`
@@ -319,11 +319,11 @@ If you inspect the HTML created by ldoc, you should find that there are enough c
 
 ldoc.page('Additional Resources', 'additional-resources', l(() => div(
     `Need more examples? Take a look at the source code for this documentation. You can find the source at `,
-    a({ href: 'https://github.com/adambertrandberger/ldoc' }, 'https://github.com/adambertrandberger/ldoc'),
+    a({ href: 'https://github.com/bergerab/ldoc' }, 'https://github.com/bergerab/ldoc'),
     br,br,
     span(`
 To learn more about generating the HTML needed for ldoc, take a look at 
-    `), a({ href: 'https://github.com/adambertrandberger/l' }, 'https://github.com/adambertrandberger/l'),
+    `), a({ href: 'https://github.com/bergerab/l' }, 'https://github.com/bergerab/l'),
     p(`The documentation for l also includes related libraries that can be used for the same purpose.`),
 )));
 
