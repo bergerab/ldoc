@@ -17,7 +17,7 @@ ldoc.page('Introduction', 'intro', l(() => div(
         { align: 'center' },
         img({ src: '../img/logo.png', width: '200px' }),
         div(
-            a({ href: 'https://travis-ci.org/adambertrandberger/ldoc'}, img({ alt: 'build status', src: 'https://travis-ci.org/bergerab/ldoc.svg?branch=master' })),
+            a({ href: 'https://travis-ci.org/adambertrandberger/ldoc'}, img({ alt: 'build status', src: 'https://travis-ci.org/adambertrandberger/ldoc.svg?branch=master' })),
         ),
     ),
     p(`
